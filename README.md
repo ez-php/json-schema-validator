@@ -1,0 +1,58 @@
+# ez-php/json-schema-validator
+
+Validates decoded JSON against JSON Schema, specifically the draft 2020-12 subset that [`ez-php/json-schema`](https://github.com/ez-php/json-schema) generates. Errors come with JSON Pointer paths. No runtime dependencies.
+
+## Installation
+
+```bash
+composer require ez-php/json-schema-validator
+```
+
+## Usage
+
+```php
+use EzPhp\JsonSchema\SchemaGenerator;
+use EzPhp\JsonSchemaValidator\Validator;
+
+$schema = (new SchemaGenerator())->generate(CreateCustomer::class);
+
+$result = (new Validator())->validate(json_decode($rawBody, true), $schema);
+
+if (!$result->isValid()) {
+    return new Response(json_encode(['errors' => $result->messages()]), 422);
+    // {"errors": {"/email": ["Value does not match format \"email\"."], "/address/city": ["Property \"city\" is required."]}}
+}
+```
+
+`$result->errors()` returns `ValidationError` objects (`pointer`, `keyword`, `message`). All errors are collected, not just the first.
+
+Hand-written schemas work too, as long as they stay within the supported keywords.
+
+## Supported keywords
+
+| Keyword | Notes |
+|---|---|
+| `type` | single type or list (`["string", "null"]`); `3.0` counts as `integer` |
+| `enum` | JSON equality (`1` equals `1.0`) |
+| `properties`, `required` | undeclared properties are allowed; a `required` error points at the missing property |
+| `items` | one schema for every element |
+| `anyOf` | reports one error at its own location |
+| `format` | asserts `date-time`, `date`, `email`, `uri`, `uuid`; other formats are ignored |
+| `pattern` | unanchored, Unicode |
+| `minimum`, `maximum` | inclusive |
+| `$ref` | local JSON Pointers into the root (`#`, `#/$defs/X`, `#/components/schemas/X`) |
+| `true` / `false` | boolean schemas |
+
+Annotations (`description`, `default`, `title`, `examples`, `$schema`, `$defs`, ...) are ignored. **Any other keyword throws `SchemaException`.** An unsupported constraint never passes silently.
+
+## Data
+
+Pass data decoded with `json_decode($json, true)` (arrays) or as stdClass objects. With arrays, a list is a JSON array and any other array an object. An empty array satisfies both `array` and `object`, since `json_decode` can't tell `[]` from `{}`; decode to stdClass if that distinction matters.
+
+## Not included
+
+Remote `$ref`s, the full 2020-12 vocabulary (`oneOf`, `allOf`, `minLength`, `additionalProperties`, ...), older drafts. For those, use a full-spec validator library.
+
+## License
+
+MIT
