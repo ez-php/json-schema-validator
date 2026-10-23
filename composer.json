@@ -1,6 +1,6 @@
 {
   "name": "ez-php/json-schema-validator",
-  "version": "2.5.10",
+  "version": "2.6.0",
   "description": "Validates decoded JSON against the JSON Schema subset ez-php/json-schema generates, with JSON Pointer error paths",
   "type": "library",
   "license": "MIT",
