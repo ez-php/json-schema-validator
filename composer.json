@@ -25,10 +25,10 @@
     "ez-php/json-schema": "Needed for Http\\JsonSchemaMiddleware schemas generated from request classes"
   },
   "require-dev": {
-    "ez-php/docker": "^2.0",
-    "ez-php/json-schema": "^2.0",
-    "ez-php/contracts": "^2.0",
-    "ez-php/http": "^2.0",
+    "ez-php/docker": "^2.6.0",
+    "ez-php/json-schema": "^2.6.0",
+    "ez-php/contracts": "^2.6.0",
+    "ez-php/http": "^2.6.0",
     "phpunit/phpunit": "^13.0",
     "phpstan/phpstan": "^2.1",
     "friendsofphp/php-cs-fixer": "^3.94",
